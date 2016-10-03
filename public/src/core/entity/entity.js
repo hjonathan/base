@@ -2,7 +2,7 @@ const uuid = require('node-uuid');
 const Immutable = require("immutable");
 const _ = require("lodash");
 
-var Store = function (options) {
+var Entity = function (options) {
     var that = this,
         jona = this,
         id = uuid.v1(),
@@ -251,4 +251,4 @@ var Store = function (options) {
     this.init(options);
 };
 
-module.exports = Store;
+module.exports = Entity;
