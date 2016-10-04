@@ -2,7 +2,7 @@ const _ = require("lodash");
 const Entity = require("./entity");
 
 var ContainerModule = function (options) {
-    this.ServiceLocator = null;
+    this.serviceLocator = null;
     this.collection = null;
     ContainerModule.prototype.init.call(this, options);
 };
@@ -13,7 +13,7 @@ _.extend(ContainerModule.prototype, {
     },
     addModule: function (nameModule, arrServices, callbackView) {
         var nModule,
-            services;
+            services = [];
 
         services = this.getServices(arrServices);
         try {

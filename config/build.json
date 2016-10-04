@@ -1,0 +1,150 @@
+[
+  {
+    "id": "example",
+    "description": "Building xproject library",
+    "steps": [
+      {
+        "type": "read",
+        "src": "config/conf.json",
+        "variable": "FILES"
+      },
+      {
+        "type": "parse",
+        "data": "%FILES%",
+        "parseTo": "json",
+        "path": "js/files",
+        "variable": "FILES"
+      },
+      {
+        "type": "browserify",
+        "files": "%FILES%",
+        "dest_dir": "build/js",
+        "dest_name": "bundle.js"
+      },
+      {
+        "type": "copy",
+        "src_dir": "base",
+        "dest_dir": "build",
+        "file_mode": 777,
+        "files": [
+          {
+            "src": "index.html",
+            "dest_name": "index.html"
+          },
+          {
+            "src": "css/base.css",
+            "dest_name": "css/base.css"
+          },
+          {
+            "src": "css/index.css",
+            "dest_name": "css/index.css"
+          },
+          {
+            "src": "css/bootstrap.min.css",
+            "dest_name": "css/bootstrap.min.css"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cards",
+    "description": "Building xproject library",
+    "steps": [
+      {
+        "type": "read",
+        "src": "config/conf.json",
+        "variable": "FILES"
+      },
+      {
+        "type": "parse",
+        "data": "%FILES%",
+        "parseTo": "json",
+        "path": "js/files",
+        "variable": "FILES"
+      },
+      {
+        "type": "browserify",
+        "files": "%FILES%",
+        "dest_dir": "build/js",
+        "dest_name": "bundle.js"
+      },
+      {
+        "type": "copy",
+        "src_dir": "example/cards",
+        "dest_dir": "build",
+        "file_mode": 777,
+        "files": [
+          {
+            "src": "index.html",
+            "dest_name": "index.html"
+          },
+          {
+            "src": "materialize/css/materialize.css",
+            "dest_name": "css/materialize.css"
+          },
+          {
+            "src": "css/core.css",
+            "dest_name": "css/core.css"
+          },
+          {
+            "src": "materialize/js/materialize.min.js",
+            "dest_name": "js/materialize.min.js"
+          },
+          {
+            "src": "materialize/fonts/roboto/Roboto-Medium.woff2",
+            "dest_name": "fonts/roboto/Roboto-Medium.woff2"
+          },
+          {
+            "src": "materialize/fonts/roboto/Roboto-Regular.woff2",
+            "dest_name": "fonts/roboto/Roboto-Regular.woff2"
+          },
+          {
+            "src": "materialize/fonts/roboto/Roboto-Medium.woff",
+            "dest_name": "fonts/roboto/Roboto-Medium.woff"
+          },
+          {
+            "src": "materialize/fonts/roboto/Roboto-Regular.woff",
+            "dest_name": "fonts/roboto/Roboto-Regular.woff"
+          },
+          {
+            "src": "materialize/fonts/roboto/Roboto-Medium.ttf",
+            "dest_name": "fonts/roboto/Roboto-Medium.ttf"
+          },
+          {
+            "src": "materialize/fonts/roboto/Roboto-Regular.ttf",
+            "dest_name": "fonts/roboto/Roboto-Regular.ttf"
+          },
+          {
+            "src": "materialize/fonts/roboto/Roboto-Bold.woff2",
+            "dest_name": "fonts/roboto/Roboto-Bold.woff2"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "test-rest",
+    "description": "Building test library",
+    "steps": [
+      {
+        "type": "read",
+        "src": "config/conf.json",
+        "variable": "FILES"
+      },
+      {
+        "type": "parse",
+        "data": "%FILES%",
+        "parseTo": "json",
+        "path": "test-rest/files",
+        "variable": "FILES"
+      },
+      {
+        "type": "test",
+        "files": "%FILES%",
+        "dest_dir": "build/js",
+        "dest_name": "bundle.js"
+      }
+    ]
+  }
+]

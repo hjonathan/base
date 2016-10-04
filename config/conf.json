@@ -1,0 +1,7 @@
+{
+  "test-rest": {
+    "files": [
+      "public/src/core/services/ConnectionManager/test/ConnectionManager.test.js"
+    ]
+  }
+}

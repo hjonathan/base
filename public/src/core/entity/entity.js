@@ -4,7 +4,6 @@ const _ = require("lodash");
 
 var Entity = function (options) {
     var that = this,
-        jona = this,
         id = uuid.v1(),
         childs = [],
         redus = [],
@@ -13,6 +12,7 @@ var Entity = function (options) {
         state = Immutable.Map({}),
         initialize = function () {
         };
+
 
     this.init = function (options) {
         if (_.isObject(options)) {

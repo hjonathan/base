@@ -1,17 +1,20 @@
-const path = require('path'),
+var path = require('path'),
     gchmod = require('gulp-chmod'),
-    CWD = process.cwd()
+    CWD = process.cwd(),
     gconcat = require('gulp-concat'),
     grename = require('gulp-rename'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     gutil = require('gulp-util'),
-    grename = require('gulp-rename'),
     del = require('del'),
     exec = require('child_process').exec,
     execFile = require('child_process').execFile,
     fs = require('fs'),
     mkdirp = require('mkdirp'),
     replace = require('gulp-replace'),
+    browserify = require('gulp-browserify'),
+    babel = require('babelify'),
+    mocha = require('gulp-mocha'),
+    argv = require('yargs').argv,
     isWIN = /^win/.test(process.platform);
 
 var gulp = require('gulp'),
@@ -45,11 +48,11 @@ function getValue(key, vars) {
             }
         }
     } else if (variable = getVariableName(value)) {
-         finalValue = vars[variable];
+        finalValue = vars[variable];
     } else {
         finalValue = value;
     }
-    
+
     return finalValue;
 }
 
@@ -103,7 +106,7 @@ function executeRake(cb, vars) {
 
     gutil.log(gutil.colors.yellow('Executing Rake ' + (task ? '(task: ' + task + ') ' : '') + 'in ' + this.rake_dir));
     exec('rake ' + task, {
-        cwd: path.join(__dirname , dir)
+        cwd: path.join(__dirname, dir)
     }, function (err, stdout, stderr) {
         if (err) {
             cb(err);
@@ -130,7 +133,7 @@ function executeCopy(cb) {
         i,
         copied = 0,
         finishCopy = function () {
-            copied ++;
+            copied++;
             if (copied === files_length) {
                 cb();
             }
@@ -146,7 +149,7 @@ function executeCopy(cb) {
         file_dest_dir = file['dest_dir'] || '';
         file_dest_name = file['dest_name'] || '';
 
-        origin = path.join(src_dir, file['src']); 
+        origin = path.join(src_dir, file['src']);
         destination = path.join(dest_dir, file_dest_dir);
 
         validatePath(destination);
@@ -158,12 +161,12 @@ function executeCopy(cb) {
                 .pipe(grename(file_dest_name))
                 .pipe(gulp.dest(destination))
                 .on('error', showError)
-                .on('end', finishCopy); 
+                .on('end', finishCopy);
         } else {
             stream = gulp.src([origin])
                 .pipe(gulp.dest(destination))
                 .on('error', showError)
-                .on('end', finishCopy); 
+                .on('end', finishCopy);
         }
 
         if (file_mode) {
@@ -187,14 +190,12 @@ function executeRead(cb, vars) {
     gutil.log(gutil.colors.yellow('Executing read operation from ' + src));
 
     validatePath(src);
-
     fs.readFile(src, function (err, data) {
         if (err) {
             return cb(err);
         }
 
         data = data.toString();
-
         if (typeof that.variable === 'string') {
             vars[that.variable] = data;
         }
@@ -204,7 +205,6 @@ function executeRead(cb, vars) {
 
 function executeParse(cb, vars) {
     var data, path, i;
-
     gutil.log(gutil.colors.yellow('Executing parsing (' + this.parseTo + ')'));
 
     switch (this.parseTo) {
@@ -212,7 +212,6 @@ function executeParse(cb, vars) {
             path = this.path || "";
             path = path.split("/");
             data = JSON.parse(getValue.call(this, 'data', vars));
-
             for (i = 0; i < path.length; i += 1) {
                 if (path[i]) {
                     data = data[path[i]];
@@ -253,9 +252,9 @@ function executeReplaceFileContents(cb, vars) {
     for (i = 0; i < replacements.length; i += 1) {
         replacement = replacements[i];
         stream = stream.pipe(replace(
-                getValue.call(replacement, 'search', vars),
-                getValue.call(replacement, 'replaceBy', vars)
-            ));
+            getValue.call(replacement, 'search', vars),
+            getValue.call(replacement, 'replaceBy', vars)
+        ));
     }
 
     stream.pipe(grename(dest_file))
@@ -265,7 +264,7 @@ function executeReplaceFileContents(cb, vars) {
                 vars[this.variable] = data;
             }
             cb();
-        });  
+        });
 }
 
 function executeReplaceString(cb, vars) {
@@ -273,7 +272,7 @@ function executeReplaceString(cb, vars) {
         replacement,
         result = [],
         isString = false,
-        i, 
+        i,
         j;
 
     gutil.log(gutil.colors.yellow('Executing replacing'));
@@ -282,17 +281,17 @@ function executeReplaceString(cb, vars) {
         target = [target];
         isString = true;
     }
-    
+
     for (j = 0; j < target.length; j += 1) {
         result[j] = target[j];
         for (i = 0; i < this.replacements.length; i += 1) {
             replacement = this.replacements[i];
             result[j] = result[j].replace(getValue.call(replacement, "search", vars), getValue.call(replacement, "replaceBy", vars));
-        }   
+        }
     }
-    
+
     result = isString ? result[0] : result;
-    
+
     if (typeof this.variable === 'string') {
         vars[this.variable] = result;
     }
@@ -327,7 +326,7 @@ function executeConcatenate(cb, vars) {
             .pipe(gulp.dest(this['dest_dir']));
     } else {
         gutil.log(gutil.colors.yellow('Executing concatenation of ' + files.length + ' files'));
-        
+
         gulp.src(files)
             .pipe(gconcat('__TMP__'))
             .on('error', function (err) {
@@ -347,9 +346,9 @@ function executeConcatenate(cb, vars) {
 
 function executeWrite(cb, vars) {
     var thePath = path.join(
-            getValue.call(this, "dest_dir", vars),
-            getValue.call(this, "dest_name", vars)
-        );
+        getValue.call(this, "dest_dir", vars),
+        getValue.call(this, "dest_name", vars)
+    );
 
     gutil.log(gutil.colors.yellow('Executing writing of file ' + thePath));
 
@@ -364,7 +363,7 @@ function executeExec(cb, vars) {
     var that = this,
         working_dir = path.join(this['working_dir']), // This modifies the path to POSIX/Windows
         args = this['arguments'] || [],
-        opts = {}; 
+        opts = {};
 
     if (isWIN) {
         opts['shell'] = 'git-bash.exe';
@@ -391,6 +390,95 @@ function executeVariable(cb, vars) {
     gutil.log(gutil.colors.yellow('Executing assignation into variable ' + varName));
     vars[varName] = getValue.call(this, 'value', vars);
     cb();
+}
+
+function executeBrowserify(cb, vars) {
+    var that = this,
+        completePath,
+        files = getValue.call(this, 'files', vars),
+        name = getValue.call(this, 'dest_name', vars),
+        dest = getValue.call(this, 'dest_dir', vars),
+        finishCopy = function () {
+            cb();
+        },
+        showError = function (e) {
+            console.log("asdsa");
+            gutil.log(gutil.colors.red(e));
+        };
+
+    gutil.log(gutil.colors.yellow('Executing browserify'));
+    completePath = path.join(dest, name);
+    validatePath(completePath);
+    gulp.src(files)
+        .pipe(browserify({
+            insertGlobals: true,
+            debug: !gulp.env.production
+        }))
+        .pipe(grename(name))
+        .pipe(gulp.dest(dest))
+        .on('error', showError)
+        .on('end', finishCopy);
+}
+
+function executeBabelBrowserify(cb, vars) {
+    var that = this,
+        completePath,
+        files = getValue.call(this, 'files', vars),
+        name = getValue.call(this, 'dest_name', vars),
+        dest = getValue.call(this, 'dest_dir', vars),
+        finishCopy = function () {
+            cb();
+        },
+        showError = function (e) {
+            gutil.log(gutil.colors.red(e));
+        };
+    mkdirp(dest, function (err) {
+        if (typeof callback === 'function') {
+            callback(err);
+        }
+    });
+    gutil.log(gutil.colors.yellow('Executing babel-browserify'));
+    completePath = path.join(dest, name);
+    validatePath(completePath);
+    browserify(files) // Browserify
+        .transform(babel.configure({
+            presets: ["es2015", "react"]
+        }))
+        .bundle()
+        .pipe(fs.createWriteStream(dest + "/" + name))
+        .on('error', showError)
+        .on('end', finishCopy);
+}
+
+
+function executeMocha(cb, vars) {
+    var that = this,
+        completePath,
+        files = getValue.call(this, 'files', vars),
+        name = getValue.call(this, 'dest_name', vars),
+        dest = getValue.call(this, 'dest_dir', vars),
+        finishCopy = function () {
+            cb();
+        },
+        showError = function (e) {
+            gutil.log(gutil.colors.red(e));
+        };
+
+    console.log("jonas yo llegue aqui");
+    console.log(files);
+
+    mkdirp(dest, function (err) {
+        if (typeof callback === 'function') {
+            callback(err);
+        }
+    });
+    gutil.log(gutil.colors.yellow('Executing Mocha'));
+    completePath = path.join(dest, name);
+    validatePath(completePath);
+    gulp.src(files)
+        .pipe(mocha())
+        .on('error', showError)
+        .on('end', finishCopy);
 }
 
 function processTask(callback, stepIndex, variables) {
@@ -441,6 +529,16 @@ function processTask(callback, stepIndex, variables) {
                         break;
                     case 'variable':
                         fn = executeVariable;
+                        break;
+                    case 'browserify':
+                        fn = executeBrowserify;
+                        break;
+                    case 'babel-browserify':
+                        fn = executeBabelBrowserify;
+                        break;
+                    case 'test':
+                        fn = executeMocha;
+                        break;
                 }
 
                 if (fn) {
@@ -458,7 +556,7 @@ function processTask(callback, stepIndex, variables) {
         } else {
             gutil.log(gutil.colors.green('DONE!'));
             callback();
-        } 
+        }
     } catch (e) {
         gutil.log(gutil.colors.red('Error at processing ' + this.id + ', step #' + (stepIndex + 1) + ' (' + step.type + '): ' + e.message));
         process.exit();
@@ -467,17 +565,25 @@ function processTask(callback, stepIndex, variables) {
 
 gulp.task('clean', function () {
     gutil.log(gutil.colors.green('Cleaning directories...'));
-
-    cleanDirectory('workflow/public_html/lib');
+    cleanDirectory('build');
 });
 
 gulp.task('default', ['clean'], function (cb) {
     var i, tasks = [];
-
-    gutil.log(gutil.colors.green('Initializing ProcessMaker building...'));
-
-    for (i = 0; i < config.length; i += 1) {
-        tasks.push(_.bind(processTask, config[i]));
+    gutil.log(gutil.colors.green('Initializing xproject building...'));
+    if (argv.id && argv.id !== "") {
+        for (i = 0; i < config.length; i += 1) {
+            if (config[i].id === argv.id) {
+                tasks.push(_.bind(processTask, config[i]));
+                break;
+            }
+        }
+    } else {
+        for (i = 0; i < config.length; i += 1) {
+            tasks.push(_.bind(processTask, config[i]));
+        }
     }
-    executeSequence(tasks, cb);
+    if (tasks.length > 0) {
+        executeSequence(tasks, cb);
+    }
 });
