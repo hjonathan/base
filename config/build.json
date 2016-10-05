@@ -1,7 +1,7 @@
 [
   {
-    "id": "example",
-    "description": "Building xproject library",
+    "id": "build",
+    "description": "Building files publics",
     "steps": [
       {
         "type": "read",
@@ -12,36 +12,77 @@
         "type": "parse",
         "data": "%FILES%",
         "parseTo": "json",
-        "path": "js/files",
+        "path": "build/files",
         "variable": "FILES"
       },
       {
         "type": "browserify",
         "files": "%FILES%",
-        "dest_dir": "build/js",
+        "dest_dir": "public/js",
         "dest_name": "bundle.js"
       },
       {
+        "type": "read",
+        "src": "config/conf.json",
+        "variable": "FILES"
+      },
+      {
+        "type": "parse",
+        "data": "%FILES%",
+        "parseTo": "json",
+        "path": "templates/files",
+        "variable": "FILES"
+      },
+      {
+        "type": "concatenate",
+        "files": "%FILES%",
+        "variable": "CONCATENATED"
+      },
+      {
+        "type": "replaceFileContents",
+        "orig_file": "frontend/index.html",
+        "dest_dir": "public",
+        "dest_file": "index.html",
+        "replacements": [
+          {
+            "search": "###TEMPLATES###",
+            "replaceBy": "%CONCATENATED%"
+          }
+        ]
+      },
+      {
         "type": "copy",
-        "src_dir": "base",
-        "dest_dir": "build",
+        "src_dir": "frontend",
+        "dest_dir": "public",
         "file_mode": 777,
         "files": [
           {
-            "src": "index.html",
-            "dest_name": "index.html"
+            "src": "libs/materialize/js/materialize.js",
+            "dest_name": "js/materialize.js"
           },
           {
-            "src": "css/base.css",
-            "dest_name": "css/base.css"
+            "src": "libs/materialize/css/materialize.css",
+            "dest_name": "css/materialize.css"
           },
           {
             "src": "css/index.css",
             "dest_name": "css/index.css"
           },
           {
-            "src": "css/bootstrap.min.css",
-            "dest_name": "css/bootstrap.min.css"
+            "src": "libs/materialize/fonts/roboto/Roboto_bold.eot",
+            "dest_name": "fonts/roboto/Roboto_bold.eot"
+          },
+          {
+            "src": "libs/materialize/fonts/roboto/Roboto_bold.ttf",
+            "dest_name": "fonts/roboto/Roboto_bold.ttf"
+          },
+          {
+            "src": "libs/materialize/fonts/roboto/Roboto_bold.woff",
+            "dest_name": "fonts/roboto/Roboto_bold.woff"
+          },
+          {
+            "src": "libs/materialize/fonts/roboto/Roboto_bold.woff2",
+            "dest_name": "fonts/roboto/Roboto_bold.woff2"
           }
         ]
       }
@@ -118,6 +159,30 @@
           {
             "src": "materialize/fonts/roboto/Roboto-Bold.woff2",
             "dest_name": "fonts/roboto/Roboto-Bold.woff2"
+          }
+        ]
+      },
+      {
+        "type": "copy",
+        "src_dir": "base",
+        "dest_dir": "build",
+        "file_mode": 777,
+        "files": [
+          {
+            "src": "index.html",
+            "dest_name": "index.html"
+          },
+          {
+            "src": "css/base.css",
+            "dest_name": "css/base.css"
+          },
+          {
+            "src": "css/index.css",
+            "dest_name": "css/index.css"
+          },
+          {
+            "src": "css/bootstrap.min.css",
+            "dest_name": "css/bootstrap.min.css"
           }
         ]
       }

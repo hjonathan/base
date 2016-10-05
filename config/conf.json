@@ -3,5 +3,15 @@
     "files": [
       "public/src/core/services/ConnectionManager/test/ConnectionManager.test.js"
     ]
+  },
+  "build": {
+    "files": [
+      "frontend/src/Truth.js"
+    ]
+  },
+  "templates": {
+    "files": [
+      "frontend/src/modules/main/panelMain/PanelMain.tpl.html"
+    ]
   }
 }
