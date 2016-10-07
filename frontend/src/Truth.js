@@ -1,19 +1,42 @@
-var PanelMain = require("./modules/main/panelMain/PanelMain"),
+const _ = require("lodash"),
+    Component = require("./core/components/ComponentBase"),
+    Factory = require("./core/components/Factory"),
+    Module = require("./core/components/Module"),
     $ = require("jquery");
 
-var ServiceManager = {};
-
-var mainComponent = new PanelMain({
-    serviceLocator: ServiceManager
-});
-mainComponent.render();
-$("#app-container").append(mainComponent.$el);
-if (window) {
-    window.app = {
-        active: "",
-        reactive: mainComponent,
-        pasive: ""
+/**
+ * Class Main
+ */
+var Truth = function (options) {
+    this.containerFactory = new Factory();
+    this.containerModule = new Module();
+    Truth.prototype.init.call(this, options);
+};
+_.extend(Truth.prototype, {
+    init: function () {
+    },
+    component: function (obj) {
+        var el = function (options) {
+            Component.prototype.init.call(this, options);
+        };
+        _.extend(el.prototype, Component.prototype);
+        _.extend(el.prototype, obj);
+        return el;
+    },
+    factory: function (alias, services, obj) {
+        if (obj && services) {
+            this.containerFactory.add(alias, services, obj);
+        } else {
+            return this.containerFactory.get(alias);
+        }
+    },
+    module: function (alias, obj) {
+        if (obj) {
+            this.containerModule.add(alias, obj);
+        } else {
+            return this.containerModule.get(alias);
+        }
     }
-}
-// add Modules -- login
-require("./modules/login/Login")();
+});
+
+module.exports = Truth;

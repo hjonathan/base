@@ -2,8 +2,8 @@ const _ = require("lodash"),
     $ = require("jquery");
 
 module.exports = function () {
-    oneTruth.factory("fact-login", [], function (services) {
-        var Login = oneTruth.component({
+    window.oneTruth.factory("fact-main", [], function (services) {
+        var PanelMain = oneTruth.component({
             template: _.template($("#tpl-panel-main").html()),
             $el: null,
             init: function () {
@@ -14,6 +14,6 @@ module.exports = function () {
                 return this;
             }
         });
-        return Login;
+        return PanelMain;
     });
 };

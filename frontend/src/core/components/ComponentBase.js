@@ -3,27 +3,38 @@ const _ = require("lodash"),
     Emitter = new Event.EventEmitter();
 
 var ComponentBase = function (options) {
-    this.collection = [];
-    this.serviceLocator = null;
     ComponentBase.prototype.init.call(this, options);
 };
 
 _.extend(ComponentBase.prototype, Emitter);
 _.extend(ComponentBase.prototype, {
     init: function (options) {
-        this.serviceLocator = options && options.serviceLocator ? options.serviceLocator : {};
-        return this;
+        this.id = null;
+        this.collection = [];
+        this.children = [];
+        this.defaults = {};
     },
-    addComponent: function (alias, arr, cb) {
-        this.collection.push({
-            id: alias,
-            component: cb()
+    adopt: function (comp) {
+        this.children.push({
+            id: comp.getId(),
+            component: comp
         });
     },
-    getComponent: function (alias) {
-        return _.find(this.collection, function (o) {
+    getChild: function (alias) {
+        var el = _.find(this.collection, function (o) {
             return o.id === alias;
         });
+        return el.component;
+    },
+    getId: function () {
+        return this.id;
+    },
+    get: function (key) {
+        return this.defaults[key];
+    },
+    set: function (key, value) {
+        this.defaults[key] = value;
+        return this;
     }
 });
 

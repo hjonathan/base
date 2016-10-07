@@ -57,6 +57,10 @@
         "file_mode": 777,
         "files": [
           {
+            "src": "src/app.js",
+            "dest_name": "js/app.js"
+          },
+          {
             "src": "libs/materialize/js/materialize.js",
             "dest_name": "js/materialize.js"
           },

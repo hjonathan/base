@@ -6,12 +6,13 @@
   },
   "build": {
     "files": [
-      "frontend/src/Truth.js"
+      "frontend/src/app.js"
     ]
   },
   "templates": {
     "files": [
-      "frontend/src/modules/main/panelMain/PanelMain.tpl.html"
+      "frontend/src/modules/panels/main/Main.tpl.html",
+      "frontend/src/modules/login/Login.tpl.html"
     ]
   }
 }
