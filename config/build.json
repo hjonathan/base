@@ -65,28 +65,36 @@
             "dest_name": "js/materialize.js"
           },
           {
+            "src": "libs/jquery/jquery.js",
+            "dest_name": "js/jquery.js"
+          },
+          {
             "src": "libs/materialize/css/materialize.css",
             "dest_name": "css/materialize.css"
           },
           {
-            "src": "css/index.css",
-            "dest_name": "css/index.css"
+            "src": "libs/materialize/css/ghpages-materialize.css",
+            "dest_name": "css/ghpages-materialize.css"
           },
           {
-            "src": "libs/materialize/fonts/roboto/Roboto_bold.eot",
-            "dest_name": "fonts/roboto/Roboto_bold.eot"
+            "src": "libs/materialize/css/material-icon.css",
+            "dest_name": "css/material-icon.css"
           },
           {
-            "src": "libs/materialize/fonts/roboto/Roboto_bold.ttf",
-            "dest_name": "fonts/roboto/Roboto_bold.ttf"
+            "src": "libs/materialize/fonts/roboto/Roboto-bold.eot",
+            "dest_name": "fonts/roboto/Roboto-bold.eot"
           },
           {
-            "src": "libs/materialize/fonts/roboto/Roboto_bold.woff",
-            "dest_name": "fonts/roboto/Roboto_bold.woff"
+            "src": "libs/materialize/fonts/roboto/Roboto-Regular.ttf",
+            "dest_name": "fonts/roboto/Roboto-Regular.ttf"
           },
           {
-            "src": "libs/materialize/fonts/roboto/Roboto_bold.woff2",
-            "dest_name": "fonts/roboto/Roboto_bold.woff2"
+            "src": "libs/materialize/fonts/roboto/Roboto-Regular.woff",
+            "dest_name": "fonts/roboto/Roboto-Regular.woff"
+          },
+          {
+            "src": "libs/materialize/fonts/roboto/Roboto-Regular.woff2",
+            "dest_name": "fonts/roboto/Roboto-Regular.woff2"
           }
         ]
       }

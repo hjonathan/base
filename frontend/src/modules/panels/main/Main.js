@@ -10,7 +10,7 @@ module.exports = function () {
 
             },
             render: function () {
-                this.$el = this.template({});
+                this.$el = $(this.template({}));
                 return this;
             }
         });

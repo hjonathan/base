@@ -4,13 +4,13 @@ const _ = require("lodash"),
 module.exports = function () {
     oneTruth.factory("fact-login", [], function (services) {
         var Login = oneTruth.component({
-            template: _.template($("#tpl-panel-main").html()),
+            template: _.template($("#tpl-mod-login").html()),
             $el: null,
             init: function () {
 
             },
             render: function () {
-                this.$el = this.template({});
+                this.$el = $(this.template({}));
                 return this;
             }
         });
